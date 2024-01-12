@@ -1,5 +1,5 @@
-const request = require("supertest");
-const assert = require("assert");
+// const request = require("supertest");
+// const assert = require("assert");
 const express = require("express");
 
 const app = express();
@@ -11,13 +11,18 @@ let errorCount = 0;
 // 2. Maintain the errorCount variable whose value should go up every time there is an exception in any endpoint
 
 const errorMiddleware = (err, req, res, next) => {
+  console.log("Error Called", err);
   errorCount++;
-  res.status(404).json({ msg: "Not found" });
+  console.log("errorCount", errorCount);
+  res.status(404).json({ msg: "Not found", errorCount: errorCount });
 };
 
 app.get("/user", function (req, res) {
-  throw new Error("User not found");
+  console.log("HIT");
+  console.dir(Error);
   res.status(200).json({ name: "john" });
+  throw new Error("User not found");
+  // res.status(200).json({ name: "john" });
 });
 
 app.post("/user", function (req, res) {
@@ -28,6 +33,10 @@ app.get("/errorCount", function (req, res) {
   res.status(200).json({ errorCount });
 });
 
+const port = 3000;
+console.log("Fuck");
 app.use(errorMiddleware);
-
+app.listen(port, () => {
+  console.log("server started on ", port);
+});
 module.exports = app;
